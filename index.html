@@ -322,12 +322,29 @@
       }
 
       .stats {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 14px;
         padding: 30px 0;
         background: #fff;
       }
+
+      .demo-metrics {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr));
+        gap: 14px;
+      }
+
+      .case-days {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 12px;
+      }
+
+      .case-days legend { font-weight: 720; }
+      .case-days label { display: inline-flex; align-items: center; margin: 4px 10px 4px 0; }
+      .case-days input { width: 18px; min-height: 18px; accent-color: var(--teal); }
+      .case-actions, .match-reasons { display: flex; flex-wrap: wrap; gap: 8px; }
+      .match-reasons { padding: 0; margin-bottom: 0; list-style: none; }
+      [data-status]:empty { display: none; }
+      [hidden] { display: none !important; }
 
       .metric,
       .card {
@@ -717,6 +734,7 @@
       }
 
       @media (max-width: 640px) {
+        .demo-heading, .row-between:has(> [data-action]) { flex-direction: column; align-items: stretch; }
         .header-inner,
         .wrap {
           width: min(100% - 32px, 1220px);
@@ -806,7 +824,7 @@
               <div>
                 <div class="eyebrow-row">
                   <span class="badge">MVP visual</span>
-                  <span class="badge dark">Datos ficticios</span>
+                  <span class="badge dark">Datos ficticios para demostración.</span>
                 </div>
                 <h1>Cerca</h1>
                 <p class="headline">Conectamos instituciones con profesionales cerca de ellas.</p>
@@ -816,7 +834,7 @@
                   que todavia no existen.
                 </p>
                 <div class="actions">
-                  <button class="btn" data-route="buscar" type="button">Soy una institucion</button>
+                  <button class="btn" data-route="institucion" type="button">Soy una institución</button>
                   <button class="btn ghost" data-route="registro" data-audience="prestador" type="button">
                     Soy prestador
                   </button>
@@ -911,7 +929,6 @@
         </section>
 
         <section id="page-buscar" class="page"></section>
-        <section id="page-perfil" class="page"></section>
         <section id="page-institucion" class="page"></section>
         <section id="page-publicar" class="page"></section>
         <section id="page-prestador" class="page"></section>
@@ -935,94 +952,12 @@
       <div class="toast" id="toast">Accion demo realizada.</div>
     </div>
 
+    <script src="./demo-store.js"></script>
+    <script src="./demo-ui.js"></script>
     <script>
-      const providers = [
-        {
-          id: "marina",
-          name: "Marina Varela",
-          role: "Acompanante terapeutica",
-          service: "Acompanamiento terapeutico",
-          location: "CABA",
-          zone: "Caballito, Almagro y Flores",
-          availability: "Lunes a viernes por la tarde",
-          mode: "Presencial y coordinacion remota",
-          state: "Datos del perfil revisados",
-          stateClass: "ok",
-          contact: "+54 11 6***-**42",
-          experience: "6 anos en acompanamiento escolar, domiciliario y ambulatorio.",
-          description:
-            "Perfil demo orientado a acompanamientos de continuidad, con buena disponibilidad para coordinar con equipos institucionales.",
-          services: ["Acompanamiento domiciliario", "Acompanamiento escolar", "Coordinacion con institucion"],
-          institutions: ["Centro Demo Barrial A", "Programa comunitario ficticio"],
-        },
-        {
-          id: "tomas",
-          name: "Tomas Iribarne",
-          role: "Kinesiologo",
-          service: "Kinesiologia",
-          location: "CABA",
-          zone: "Palermo, Villa Crespo y Recoleta",
-          availability: "Mananas y sabados",
-          mode: "Atencion domiciliaria",
-          state: "Informacion pendiente de verificacion",
-          stateClass: "pending",
-          contact: "+54 11 5***-**18",
-          experience: "9 anos en rehabilitacion motora y atencion domiciliaria.",
-          description:
-            "Perfil demo para instituciones que necesitan derivar atencion domiciliaria con seguimiento periodico.",
-          services: ["Rehabilitacion motora", "Atencion domiciliaria", "Plan de ejercicios supervisado"],
-          institutions: ["Entidad Demo Norte", "Consultorio particular demo"],
-        },
-        {
-          id: "elena",
-          name: "Elena Sosa",
-          role: "Cuidadora domiciliaria",
-          service: "Cuidados domiciliarios",
-          location: "Zona Oeste",
-          zone: "Moron, Haedo y Ramos Mejia",
-          availability: "Lunes a viernes, jornada completa",
-          mode: "Presencial",
-          state: "Datos del perfil revisados",
-          stateClass: "ok",
-          contact: "+54 11 4***-**77",
-          experience: "4 anos en asistencia a personas mayores y apoyo cotidiano.",
-          description:
-            "Perfil demo con foco en tareas de compania, movilidad cotidiana y organizacion basica de rutinas.",
-          services: ["Compania y supervision", "Asistencia en movilidad", "Rutinas de cuidado no medico"],
-          institutions: ["Red de contactos demo Oeste"],
-        },
-        {
-          id: "nicolas",
-          name: "Nicolas Figueroa",
-          role: "Enfermero profesional",
-          service: "Enfermeria",
-          location: "Zona Sur",
-          zone: "Lanus, Lomas de Zamora y Banfield",
-          availability: "Turnos rotativos",
-          mode: "Presencial",
-          state: "En revision",
-          stateClass: "review",
-          contact: "+54 11 3***-**05",
-          experience: "8 anos en cuidados generales, control y seguimiento domiciliario.",
-          description:
-            "Perfil demo preparado para solicitudes con indicaciones claras de una institucion o equipo tratante.",
-          services: ["Control de signos vitales", "Curaciones simples declaradas", "Seguimiento domiciliario"],
-          institutions: ["Entidad Demo Sur"],
-        },
-      ];
-
-      const options = {
-        service: ["Todos los servicios", "Acompanamiento terapeutico", "Cuidados domiciliarios", "Kinesiologia", "Enfermeria", "Psicopedagogia"],
-        location: ["Todas las ubicaciones", "CABA", "Zona Norte", "Zona Oeste", "Zona Sur"],
-        zone: ["Todas las zonas", "Caballito", "Almagro", "Flores", "Palermo", "Moron", "Lanus"],
-        availability: ["Cualquier disponibilidad", "Manana", "Tarde", "Jornada completa", "Turnos rotativos"],
-        mode: ["Cualquier modalidad", "Presencial", "Atencion domiciliaria", "Mixta"],
-      };
-
-      let selectedProvider = providers[0];
       let audience = "institucion";
 
-      const pages = ["inicio", "buscar", "perfil", "institucion", "publicar", "prestador", "registro", "contacto"];
+      const pages = ["inicio", "buscar", "institucion", "publicar", "prestador", "registro", "contacto"];
 
       function esc(value) {
         return String(value).replace(/[&<>"']/g, (char) => ({
@@ -1053,221 +988,11 @@
         return `<label>${label}<select id="${id}">${values.map((item) => `<option>${esc(item)}</option>`).join("")}</select></label>`;
       }
 
-      function providerCard(provider) {
-        return `
-          <article class="card provider-card">
-            <div class="topline">
-              <div><h3>${provider.name}</h3><p>${provider.role}</p></div>
-              <span class="badge">Demo</span>
-            </div>
-            <p>${provider.description}</p>
-            <div class="info-list">
-              <span>Zona: ${provider.location} - ${provider.zone}</span>
-              <span>Disponibilidad: ${provider.availability}</span>
-              <span>Modalidad: ${provider.mode}</span>
-            </div>
-            <div class="pill-row">
-              <span class="pill ${provider.stateClass}">${provider.state}</span>
-              <span class="pill">Dato declarado por prestador</span>
-            </div>
-            <div class="card-actions">
-              <button class="btn view-profile" data-provider="${provider.id}" type="button">Ver perfil</button>
-              <button class="btn secondary contact-provider" data-name="${provider.name}" type="button">Contactar</button>
-            </div>
-          </article>
-        `;
-      }
-
-      function renderBuscar() {
-        document.querySelector("#page-buscar").innerHTML = `
-          ${pageHead(
-            "Busqueda institucional",
-            "Encontrar prestadores sin perder el hilo",
-            "Filtros ficticios para mostrar como una institucion podria explorar perfiles, comparar disponibilidad y avanzar a un contacto inicial.",
-            '<button class="btn" data-route="publicar" type="button">Publicar necesidad</button>'
-          )}
-          <div class="wrap content-grid">
-            <aside class="card filters">
-              <h3>Filtros</h3>
-              <p>Institucion u obra social figura solo como dato declarado.</p>
-              <label>Nombre, servicio o zona<input id="q" placeholder="Ej. Caballito o kinesiologia" /></label>
-              ${renderSelect("service", "Especialidad / servicio", options.service)}
-              ${renderSelect("location", "Ubicacion", options.location)}
-              ${renderSelect("zone", "Zona", options.zone)}
-              ${renderSelect("availability", "Disponibilidad", options.availability)}
-              ${renderSelect("mode", "Modalidad", options.mode)}
-              <button class="btn secondary" id="clearFilters" type="button">Limpiar filtros</button>
-            </aside>
-            <section class="results">
-              <div class="row-between">
-                <div><strong id="count"></strong><p class="muted">Todos los nombres y datos son ficticios.</p></div>
-              </div>
-              <div class="provider-grid" id="providerGrid"></div>
-            </section>
-          </div>
-        `;
-        bindRouteButtons();
-        ["q", "service", "location", "zone", "availability", "mode"].forEach((id) => {
-          document.getElementById(id).addEventListener("input", updateResults);
-        });
-        document.getElementById("clearFilters").addEventListener("click", () => {
-          document.getElementById("q").value = "";
-          ["service", "location", "zone", "availability", "mode"].forEach((id) => {
-            document.getElementById(id).selectedIndex = 0;
-          });
-          updateResults();
-        });
-        updateResults();
-      }
-
-      function updateResults() {
-        const q = document.getElementById("q").value.toLowerCase();
-        const service = document.getElementById("service").value;
-        const location = document.getElementById("location").value;
-        const zone = document.getElementById("zone").value;
-        const availability = document.getElementById("availability").value.toLowerCase();
-        const mode = document.getElementById("mode").value.toLowerCase();
-        const filtered = providers.filter((provider) => {
-          const haystack = `${provider.name} ${provider.role} ${provider.service} ${provider.zone}`.toLowerCase();
-          return (
-            (!q || haystack.includes(q)) &&
-            (service === "Todos los servicios" || provider.service === service) &&
-            (location === "Todas las ubicaciones" || provider.location === location) &&
-            (zone === "Todas las zonas" || provider.zone.toLowerCase().includes(zone.toLowerCase())) &&
-            (availability === "cualquier disponibilidad" || provider.availability.toLowerCase().includes(availability)) &&
-            (mode === "cualquier modalidad" || provider.mode.toLowerCase().includes(mode))
-          );
-        });
-        document.getElementById("count").textContent = `${filtered.length} perfiles demo encontrados`;
-        document.getElementById("providerGrid").innerHTML = filtered.map(providerCard).join("");
-        document.querySelectorAll(".view-profile").forEach((button) => {
-          button.addEventListener("click", () => {
-            selectedProvider = providers.find((provider) => provider.id === button.dataset.provider) || providers[0];
-            navigate("perfil");
-          });
-        });
-        document.querySelectorAll(".contact-provider").forEach((button) => {
-          button.addEventListener("click", () => showToast(`Contacto simulado con ${button.dataset.name} - Demo`));
-        });
-      }
-
-      function renderPerfil() {
-        const p = selectedProvider;
-        document.querySelector("#page-perfil").innerHTML = `
-          ${pageHead(
-            "Perfil profesional",
-            p.name,
-            `${p.role} - ${p.zone}. Este perfil es demostrativo y no representa una certificacion legal por parte de Cerca.`,
-            '<button class="btn secondary" data-route="buscar" type="button">Volver a busqueda</button><button class="btn" data-toast="Solicitud de contacto creada - Demo" type="button">Contactar</button>'
-          )}
-          <div class="wrap detail-grid">
-            <section class="stack">
-              <article class="card">
-                <span class="pill ${p.stateClass}">${p.state}</span>
-                <h3>${p.role}</h3>
-                <p>${p.description}</p>
-                <div class="fact-grid">
-                  <div class="fact"><small>Zona de trabajo</small><strong>${p.zone}</strong></div>
-                  <div class="fact"><small>Disponibilidad</small><strong>${p.availability}</strong></div>
-                  <div class="fact"><small>Modalidad</small><strong>${p.mode}</strong></div>
-                  <div class="fact"><small>Experiencia</small><strong>${p.experience}</strong></div>
-                </div>
-              </article>
-              <article class="card"><h3>Servicios declarados</h3><div class="pill-row">${p.services.map((s) => `<span class="pill">${s}</span>`).join("")}</div></article>
-              <article class="card list-card">
-                <h3>Documentacion</h3>
-                <p>Estructura preparada para sumar revisiones formales mas adelante. Este prototipo no conecta organismos ni APIs oficiales.</p>
-                <div class="list-row">Datos personales declarados <span class="pill ok">Datos revisados</span></div>
-                <div class="list-row">Constancia profesional <span class="pill review">En revision</span></div>
-                <div class="list-row">Documentacion complementaria <span class="pill pending">Pendiente</span></div>
-              </article>
-            </section>
-            <aside class="stack">
-              <article class="card"><h3>Contacto</h3><p>Dato oculto parcialmente para la demo.</p><strong style="font-size: 1.4rem">${p.contact}</strong><br /><br /><button class="btn" data-toast="Contacto visible solo en flujo real - Demo" type="button">Solicitar contacto</button></article>
-              <article class="card"><h3>Instituciones declaradas</h3><p>No implica convenio oficial ni validacion por Cerca.</p>${p.institutions.map((i) => `<div class="list-row">${i}</div>`).join("")}</article>
-            </aside>
-          </div>
-        `;
-        bindRouteButtons();
-      }
-
-      function renderInstitucion() {
-        document.querySelector("#page-institucion").innerHTML = `
-          ${pageHead("Panel para instituciones", "Gestionar busquedas y solicitudes en un mismo lugar", "Una vista demo para imaginar como una institucion podria guardar perfiles, publicar necesidades y revisar postulantes sin mezclar conversaciones.", '<button class="btn secondary" data-route="buscar">Buscar prestadores</button><button class="btn" data-route="publicar">Publicar necesidad</button>')}
-          <div class="wrap section">
-            <div class="grid-4">
-              <div class="metric"><small>Busquedas activas</small><strong>3</strong></div>
-              <div class="metric"><small>Perfiles guardados</small><strong>12</strong></div>
-              <div class="metric"><small>Contactos realizados</small><strong>5</strong></div>
-              <div class="metric"><small>Solicitudes</small><strong>4</strong></div>
-            </div>
-            <div class="dashboard-grid">
-              <article class="card list-card">
-                <h3>Necesidades publicadas</h3>
-                <div class="list-row"><strong>Se busca profesional para atencion domiciliaria</strong><p>Zona: Caballito. Lunes a viernes. Estado: buscando candidatos. Demo.</p></div>
-                <div class="list-row"><strong>Acompanamiento terapeutico para turno manana</strong><p>Zona: Almagro. Revisando postulantes. Demo.</p></div>
-                <div class="list-row"><strong>Cuidador/a para apoyo domiciliario</strong><p>Zona: Moron. Solicitud en preparacion. Demo.</p></div>
-              </article>
-              <aside class="stack">
-                <article class="card"><h3>Perfiles guardados</h3>${providers.slice(0, 3).map((p) => `<div class="list-row">${p.name}</div>`).join("")}</article>
-                <article class="card"><h3>Contactos realizados</h3><p>Consultas, contactos guardados y pendientes de revision. Todo demo.</p></article>
-              </aside>
-            </div>
-          </div>`;
-        bindRouteButtons();
-      }
-
-      function renderPublicar() {
-        document.querySelector("#page-publicar").innerHTML = `
-          ${pageHead("Publicar necesidad", "Crear una solicitud clara para recibir postulantes", "Formulario visual sin backend. Sirve para mostrar que una institucion podria ordenar requisitos antes de contactar prestadores.")}
-          <div class="wrap form-grid">
-            <article class="card">
-              <h3>Detalle de la necesidad</h3>
-              <form id="needForm" class="filters">
-                ${renderSelect("needService", "Tipo de profesional/servicio", options.service.slice(1))}
-                <label>Zona<input value="Caballito" /></label>
-                <label>Dias<input value="Lunes a viernes" /></label>
-                <label>Horario<input value="14 a 18 hs" /></label>
-                <label>Modalidad<select><option>Presencial</option><option>Mixta</option><option>Remota</option></select></label>
-                <label>Requisitos<input value="Experiencia declarada en domicilio" /></label>
-                <label>Descripcion<textarea>Se busca profesional para atencion domiciliaria. La institucion desea revisar perfiles disponibles en la zona y coordinar una primera conversacion.</textarea></label>
-                <button class="btn" type="submit">Crear solicitud demo</button>
-                <div class="notice" id="needNotice">Solicitud creada correctamente - Demo</div>
-              </form>
-            </article>
-            <aside class="card">
-              <h3>Vista previa</h3>
-              <div class="list-row"><strong>Se busca profesional para atencion domiciliaria</strong><p>Zona: Caballito. Lunes a viernes, 14 a 18 hs. Estado: buscando candidatos.</p><span class="badge">Demo</span></div>
-            </aside>
-          </div>`;
-        document.getElementById("needForm").addEventListener("submit", (event) => {
-          event.preventDefault();
-          document.getElementById("needNotice").classList.add("show");
-          showToast("Solicitud creada correctamente - Demo");
-        });
-      }
-
-      function renderPrestador() {
-        document.querySelector("#page-prestador").innerHTML = `
-          ${pageHead("Panel del prestador", "Mostrar disponibilidad y oportunidades compatibles", "Un tablero demo para que un prestador vea su perfil, documentacion cargada, zonas configuradas y solicitudes recibidas.", '<button class="btn" data-route="registro">Completar perfil</button>')}
-          <div class="wrap detail-grid">
-            <aside class="stack">
-              <article class="card"><h3>Perfil demo</h3><p>Marina Varela - Acompanante terapeutica</p><div class="fact"><strong>72% completo</strong></div><p>Caballito, Almagro y Flores. Tardes disponibles.</p></article>
-              <article class="card"><h3>Documentacion</h3><div class="list-row">Datos personales <span class="pill ok">Revisados</span></div><div class="list-row">Constancia profesional <span class="pill review">En revision</span></div></article>
-            </aside>
-            <section class="stack">
-              <article class="card list-card"><h3>Oportunidades disponibles</h3><div class="list-row"><strong>Acompanamiento domiciliario para continuidad semanal</strong><p>Caballito. Lunes, miercoles y viernes. Presencial.</p></div><div class="list-row"><strong>Apoyo institucional para derivaciones puntuales</strong><p>Almagro. Tardes. Modalidad mixta.</p></div><div class="list-row"><strong>Entrevista inicial para disponibilidad futura</strong><p>Flores. A coordinar. Remota.</p></div></article>
-              <div class="grid-2"><article class="card"><h3>Zonas configuradas</h3><div class="pill-row"><span class="pill">Caballito</span><span class="pill">Almagro</span><span class="pill">Flores</span></div></article><article class="card"><h3>Solicitudes recibidas</h3><p>2 nuevas solicitudes demo. 1 conversacion pendiente.</p></article></div>
-            </section>
-          </div>`;
-        bindRouteButtons();
-      }
-
       function renderRegistro() {
         const form =
           audience === "institucion"
             ? `<label>Nombre de organizacion<input placeholder="Organizacion Demo" /></label><label>Rol de quien consulta<input placeholder="Coordinacion, admision, administracion" /></label><label>Necesidad habitual<textarea placeholder="Contanos que tipo de prestadores suelen buscar."></textarea></label>`
-            : `<label>Nombre<input placeholder="Nombre ficticio para la demo" /></label>${renderSelect("providerService", "Servicio ofrecido", options.service.slice(1))}<label>Zonas de trabajo<input placeholder="Ej. Caballito, Almagro" /></label><label>Descripcion breve<textarea placeholder="Experiencia, disponibilidad y tipo de solicitudes que aceptas."></textarea></label>`;
+            : `<label>Nombre<input placeholder="Nombre ficticio para la demo" /></label>${renderSelect("providerService", "Servicio ofrecido", ["Acompañamiento terapéutico", "Cuidados domiciliarios", "Kinesiología", "Enfermería", "Psicopedagogía"])}<label>Zonas de trabajo<input placeholder="Ej. Caballito, Almagro" /></label><label>Descripcion breve<textarea placeholder="Experiencia, disponibilidad y tipo de solicitudes que aceptas."></textarea></label>`;
         document.querySelector("#page-registro").innerHTML = `
           ${pageHead("Registro", "Elegir como queres usar Cerca", "Pantalla inicial para validar los dos recorridos sin implementar autenticacion real.")}
           <div class="wrap form-grid">
@@ -1304,11 +1029,10 @@
       }
 
       function renderDynamic(route) {
-        if (route === "buscar") renderBuscar();
-        if (route === "perfil") renderPerfil();
-        if (route === "institucion") renderInstitucion();
-        if (route === "publicar") renderPublicar();
-        if (route === "prestador") renderPrestador();
+        if (["buscar", "institucion", "publicar", "prestador"].includes(route)) {
+          window.CercaDemo.open(document.getElementById("page-" + route), route);
+          return;
+        }
         if (route === "registro") renderRegistro();
         if (route === "contacto") renderContacto();
       }
@@ -1351,6 +1075,10 @@
       });
 
       bindRouteButtons();
+      window.addEventListener("hashchange", () => {
+        const route = location.hash.slice(1);
+        if (pages.includes(route)) navigate(route);
+      });
       navigate(pages.includes(location.hash.slice(1)) ? location.hash.slice(1) : "inicio");
     </script>
   </body>
